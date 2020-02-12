@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import './App.css';
-import StarshipDetailsPage from './StarshipDetailsPage/StarshipDetailsPage';
-import StarshipsPage from './StarshipsPage/StarshipsPage';
-import { getAllStarships } from '../services/sw-api';
+import StarshipDetailsPage from './pages/StarshipDetailsPage/StarshipDetailsPage';
+import StarshipsPage from './pages/StarshipsPage/StarshipsPage';
+import { getAllStarships } from './services/sw-api';
 
 const App = () => {
 	const [{ starships }, setState] = useState({
@@ -12,7 +12,6 @@ const App = () => {
 
 	useEffect(() => {
 		async function fetchData() {
-			console.log('use effect');
 			const data = await getAllStarships();
 			setState({
 				starships: data.results
