@@ -7,17 +7,27 @@ import { getPilots } from '../../services/sw-api';
 const StarshipDetailsPage = ({ location }) => {
 	const starship = location.state;
 	const [{ pilots, isLoaded }, setState] = useState({
-    pilots: [],
-    isLoaded: false
-  });
-  
+		pilots: [],
+		isLoaded: false
+	});
+
 	useEffect(() => {
-			getPilots(starship.pilots).then(pilots => {
-				setState({
-          pilots: pilots,
-          isLoaded: true
-				});
-      });
+		const abortController = new AbortController();
+
+		getPilots(starship.pilots).then(pilots => {
+			setState({
+				pilots: pilots,
+				isLoaded: true
+			});
+    })
+    .catch(err => {
+      if (!abortController.signal.aborted) {
+        console.log(err)
+      }
+    })
+		return () => {
+			abortController.abort();
+		};
 	}, [starship]);
 
 	if (isLoaded) {
@@ -36,7 +46,11 @@ const StarshipDetailsPage = ({ location }) => {
 						<tr>
 							<th>PILOTS:</th>
 							<td>
-                {pilots.length > 0 ? <PilotList pilots={pilots} /> : 'No pilots'}	
+								{pilots.length > 0 ? (
+									<PilotList pilots={pilots} />
+								) : (
+									'No pilots'
+								)}
 							</td>
 						</tr>
 						<tr>
@@ -55,6 +69,6 @@ const StarshipDetailsPage = ({ location }) => {
 			<div className="loader"></div>
 		</div>
 	);
-};
+ };
 
 export default StarshipDetailsPage;
